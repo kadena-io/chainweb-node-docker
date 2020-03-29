@@ -6,7 +6,7 @@ you only have to ensure that it can be reached on the default port 443 and use
 the following shell command to start the node.
 
 ```sh
-docker run --ulimit "nofile=65536:65536" -p 443:443 --name chainweb-node larsk/chainweb-node:latest
+docker run --detach --ulimit "nofile=65536:65536" --publish 443:443 --name chainweb-node larsk/chainweb-node:latest
 ```
 
 If you are running the node from a local network with NAT (network address
@@ -43,12 +43,13 @@ Here is an example for how to use these settings:
 
 ```sh
 docker run \
-    --env "CHAINWEB_PORT=443" \
+    --env "CHAINWEB_PORT=1789" \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
     --ulimit "nofile=65536:65536" \
     --name chainweb-node \
-    -p 443:443 \
+    --publish 1789:1789 \
+    --detach \
     chainweb-node-with-db
 ```
 
@@ -69,14 +70,20 @@ database and create a new image from it that provides an initialized database.
 ```sh
 docker run -ti --name initialize-chainweb-db larsk/chainweb-node:latest /chainweb/initialize-db.sh
 docker commit `docker ps -a -f 'name=initialize-chainweb-db' -q` chainweb-node-with-db
-docker delete initialize-chainweb-db
+docker rm initialize-chainweb-db
 ```
 
 Once the database is initialized the container can be used to run a Chainweb node
 as follows:
 
 ```sh
-docker run --ulimit "nofile=65536:65536" -p 443:443 chainweb-node-with-db /chainweb/run-chainweb-node.sh
+docker run \
+    --ulimit "nofile=65536:65536" \
+    --publish 443:443 \
+    --detach \
+    --name chainweb-node \
+    chainweb-node-with-db \
+    /chainweb/run-chainweb-node.sh
 ```
 
 # Persisting the Chainweb Database
@@ -98,9 +105,10 @@ docker run -ti --rm \
 # 2. Use the database volume with a Chainweb node
 docker run \
     --ulimit "nofile=65536:65536" \
-    -p 443:443 \
+    --publish 443:443 \
     --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
-    --name chainweb-node
+    --name chainweb-node \
+    --detach \
     larsk/chainweb-node:latest \
 ```
 
