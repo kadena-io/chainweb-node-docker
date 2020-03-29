@@ -65,7 +65,8 @@ curl "https://$CHAINWEB_BOOTSTRAP_NODE/chainweb/0.0/$CHAINWEB_NETWORK/cut/peer" 
     -sLk \
     -XPUT \
     -H 'content-type: application/json' \
-    -H 'X-Chainweb-Node-Version: 1.6' \
-    -d "$PEER_INFO" |
-    grep -q "missing X-Chainweb-Node-Version header"
+    -H 'X-Chainweb-Node-Version: 1.7' \
+    -v \
+    -d "$PEER_INFO" 2>&1 |
+    grep -q "< HTTP/2 204\|missing X-Chainweb-Node-Version header"
 

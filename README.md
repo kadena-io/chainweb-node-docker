@@ -1,25 +1,25 @@
 # Running a Chainweb Node as Docker Container
 
 **A Chainweb node must be reachable from the public internet**. For that it needs
-a public IP address and port. If you run the node from a data center all you
-have to ensure that it can be reached on the default port 443 and use the
-following shell command to start the node.
+a public IP address and port. If you run the node from a data center, usually,
+you only have to ensure that it can be reached on the default port 443 and use
+the following shell command to start the node.
 
 ```sh
-docker run --ulimit "nofile=65536:65536" -p 443:443 larsk/chainweb-node:latest
+docker run --ulimit "nofile=65536:65536" -p 443:443 --name chainweb-node larsk/chainweb-node:latest
 ```
 
 If you are running the node from a local network with NAT (network address
-translation), which the case for most home networks, you'll have configure port
-forwarding in your browser.
+translation), which is the case for most home networks, you'll have to configure
+port forwarding in your router.
 
-Because above command starts a node with an empty Chainweb database, it will
-take about 12-24 hours until the node as "caught up" with the network, joined
+Above command starts the node with an empty Chainweb database. It will take
+about 12-24 hours until the node has "caught up" with the network, joined
 consensus, and can be used for mining and processing transactions.
 
-The initialization time can be shortened by initializing the node with a
-pre-computed database. This is strongly encouraged and described further down in
-this document.
+The startup time can be shortened by initializing the node with a pre-computed
+database. This is strongly encouraged and described further down in this
+document.
 
 # Available Configuration Options
 
@@ -47,33 +47,32 @@ docker run \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
     --ulimit "nofile=65536:65536" \
-    -p 443:443 chainweb-node-with-db
+    --name chainweb-node \
+    -p 443:443 \
+    chainweb-node-with-db
 ```
 
 # Initialize Chainweb Database
 
-When the container is started for the first time it as to synchronize and
-rebuild the chainweb database from the P2P network. This can take a long time.
+When the container is started for the first time it has to synchronize and
+rebuild the Chainweb database from the P2P network. This can take a long time.
 Currently, as of 2020-03-28, this takes about twelve hours for a node in a well
 connected data center.
 
-The container includes script for synchronizing a complete pre-build database,
-which currently, as of 2020-03-28, involves downloading about 4.5GB from an S3
+The container includes script for synchronizing a pre-build database, which
+currently, as of 2020-03-28, involves downloading about 4.5GB of data from an S3
 container.
 
-By using the this database the user trusts the contents of the database for
-local use.
-
-It is recommended to run the following command to to initialize a docker
-container with a database and create a new image from it that provides an
-initialized database.
+You can the following shell commands to to initialize a docker container with a
+database and create a new image from it that provides an initialized database.
 
 ```sh
 docker run -ti --name initialize-chainweb-db larsk/chainweb-node:latest /chainweb/initialize-db.sh
 docker commit `docker ps -a -f 'name=initialize-chainweb-db' -q` chainweb-node-with-db
+docker delete initialize-chainweb-db
 ```
 
-Once the database is initialize the container can be used to run a Chainweb node
+Once the database is initialized the container can be used to run a Chainweb node
 as follows:
 
 ```sh

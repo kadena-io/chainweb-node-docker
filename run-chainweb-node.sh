@@ -16,13 +16,13 @@ export CHAINWEB_HOST
 # ############################################################################ #
 # Check connectivity
 
-curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null || 
+curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 {
     echo "Node is unable to connect the chainweb boostrap node: $CHAINWEB_BOOTSTRAP_NODE" 1>&2
     exit 1
 }
 
-bash ./check-reachability.sh "$CHAINWEB_HOST" "$CHAINWEB_PORT" ||
+./check-reachability.sh "$CHAINWEB_HOST" "$CHAINWEB_PORT" ||
 {
     echo "Node is not reachable under its public host address $CHAINWEB_HOST:$CHAINWEB_PORT" 1>&2
     exit 1
