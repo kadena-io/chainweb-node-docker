@@ -8,7 +8,6 @@ the following shell command to start the node.
 ```sh
 docker run \
     --detach \
-    --ulimit "nofile=65536:65536" \
     --publish 443:443 \
     --name chainweb-node \
     larsk/chainweb-node:latest
@@ -24,10 +23,9 @@ provided the Chainweb node in the environment.
 ```sh
 docker run \
     --detach \
-    --ulimit "nofile=65536:65536" \
-    --env "CHAINWEB_PORT=1789" \
     --publish 1789:1789 \
     --name chainweb-node \
+    --env "CHAINWEB_PORT=1789" \
     larsk/chainweb-node:latest
 ```
 
@@ -68,9 +66,8 @@ follows:
 
 ```sh
 docker run \
-    --ulimit "nofile=65536:65536" \
-    --publish 443:443 \
     --detach \
+    --publish 443:443 \
     --name chainweb-node \
     chainweb-node-with-db \
     /chainweb/run-chainweb-node.sh
@@ -94,12 +91,11 @@ docker run -ti --rm \
 
 # 2. Use the database volume with a Chainweb node
 docker run \
-    --ulimit "nofile=65536:65536" \
-    --publish 443:443 \
-    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
-    --name chainweb-node \
     --detach \
-    larsk/chainweb-node:latest \
+    --publish 443:443 \
+    --name chainweb-node \
+    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
+    larsk/chainweb-node:latest
 ```
 
 Alternatively a bind mount can be used to persist the database in the file
@@ -121,9 +117,10 @@ TODO
 * `/chainweb/initialize-db.sh`
 * `/chainweb/check-reachability.sh`
 
-### Database Directory Path:
+### File System
 
-* `/root/.local/share/chainweb-node/mainnet01/0`
+*   Database directory: `/root/.local/share/chainweb-node/mainnet01/0`
+*   Chainweb configuration file: `/chainweb/chainweb.yaml`
 
 ### Available Configuration Options
 
@@ -150,13 +147,12 @@ Here is an example for how to use these settings:
 
 ```sh
 docker run \
+    --detach \
+    --publish 1789:1789 \
+    --name chainweb-node \
     --env "CHAINWEB_PORT=1789" \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
-    --ulimit "nofile=65536:65536" \
-    --name chainweb-node \
-    --publish 1789:1789 \
-    --detach \
     chainweb-node-with-db
 ```
 

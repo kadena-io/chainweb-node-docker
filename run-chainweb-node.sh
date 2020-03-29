@@ -14,6 +14,17 @@ fi
 export CHAINWEB_HOST
 
 # ############################################################################ #
+# Check ulimit
+
+UL=$(ulimit -n -S)
+[[ "$UL" -ge 65536 ]] ||
+{
+    echo "The configuration of the container has a too tight limit for the number of open file descriptors. The limit is $UL but at least 65536 is required." 1>&2
+    echo "Try starting the container with '--ulimit \"nofile=65536:65536\"'" 1>&2
+    exit 1
+}
+
+# ############################################################################ #
 # Check connectivity
 
 curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
@@ -27,9 +38,6 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
     echo "Node is not reachable under its public host address $CHAINWEB_HOST:$CHAINWEB_PORT" 1>&2
     exit 1
 }
-
-# ############################################################################ #
-# TODO check ulimit
 
 # ############################################################################ #
 # Run node
