@@ -6,11 +6,7 @@ only have to ensure that it can be reached on the default port 443. You can use
 the following shell command to start the node.
 
 ```sh
-docker run \
-    --detach \
-    --publish 443:443 \
-    --name chainweb-node \
-    larsk/chainweb-node:latest
+docker run -d -p 443:443 larsk/chainweb-node:latest
 ```
 
 If you are running the node from a local network with NAT (network address
@@ -21,12 +17,7 @@ Using a different port is possible, too. For that the public port number must be
 provided the Chainweb node in the environment.
 
 ```sh
-docker run \
-    --detach \
-    --publish 1789:1789 \
-    --name chainweb-node \
-    --env "CHAINWEB_PORT=1789" \
-    larsk/chainweb-node:latest
+docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" larsk/chainweb-node:latest
 ```
 
 More options to configure the node are described at the bottom of this document.
