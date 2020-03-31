@@ -1,3 +1,26 @@
+# Quick Setup
+
+1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
+    router and configure port forwarding for port 443 to your computer.
+
+2.  Make sure that your firewall allows incoming connection on port 443.
+
+3.  Initialize database *(optional but saves several hours of db synchronization
+    on node startup.)*:
+
+    ```sh
+    docker run -ti --rm -v chainweb-db:/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node /chainweb/initialize-db.sh
+    ```
+
+4.  Start Chainweb node:
+
+    ```sh
+    docker run -d -p 443:443 -v chainweb-db:target=/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node
+    ```
+
+For explanations and additional configuration options (like, for instance, using
+an alternate port) keep reading.
+
 # Running a Chainweb Node as Docker Container
 
 **A Chainweb node must be reachable from the public internet**. It needs a
@@ -6,7 +29,7 @@ only have to ensure that it can be reached on the default port 443. You can use
 the following shell command to start the node.
 
 ```sh
-docker run -d -p 443:443 larsk/chainweb-node:latest
+docker run -d -p 443:443 kadena/chainweb-node:latest
 ```
 
 If you are running the node from a local network with NAT (network address
@@ -17,7 +40,7 @@ Using a different port is possible, too. For that the public port number must be
 provided the Chainweb node in the environment.
 
 ```sh
-docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" larsk/chainweb-node:latest
+docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" kadena/chainweb-node:latest
 ```
 
 More options to configure the node are described at the bottom of this document.
@@ -47,7 +70,7 @@ The following shell commands initialize a docker container with a database and
 create a new image from it.
 
 ```sh
-docker run -ti --name initialize-chainweb-db larsk/chainweb-node:latest /chainweb/initialize-db.sh
+docker run -ti --name initialize-chainweb-db kadena/chainweb-node:latest /chainweb/initialize-db.sh
 docker commit `docker ps -a -f 'name=initialize-chainweb-db' -q` chainweb-node-with-db
 docker rm initialize-chainweb-db
 ```
@@ -77,7 +100,7 @@ in the file system of the host system or on a docker volume.
 # 1. Initialize a database that is persisted on a docker volume
 docker run -ti --rm \
     --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
-    larsk/chainweb-node:latest \
+    kadena/chainweb-node:latest \
     /chainweb/initialize-db.sh
 
 # 2. Use the database volume with a Chainweb node
@@ -86,7 +109,7 @@ docker run \
     --publish 443:443 \
     --name chainweb-node \
     --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
-    larsk/chainweb-node:latest
+    kadena/chainweb-node:latest
 ```
 
 Alternatively a bind mount can be used to persist the database in the file
@@ -107,6 +130,7 @@ TODO
 * `/chainweb/run-chainweb-node.sh`
 * `/chainweb/initialize-db.sh`
 * `/chainweb/check-reachability.sh`
+* `/chainweb/check-health.sh`
 
 ### File System
 
