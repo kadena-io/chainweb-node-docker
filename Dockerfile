@@ -18,12 +18,12 @@ COPY check-reachability.sh .
 COPY run-chainweb-node.sh .
 COPY initialize-db.sh .
 COPY chainweb.yaml .
-RUN chmod 755 check-reachability.sh run-chainweb-node.sh initialize-db.sh
+COPY check-health.sh .
+RUN chmod 755 check-reachability.sh run-chainweb-node.sh initialize-db.sh check-health.sh
 
 STOPSIGNAL SIGINT
 EXPOSE 443
-HEALTHCHECK --start-period=5m --interval=1m --retries=5 --timeout=10s \
-    CMD curl -fsLk "https://localhost/chainweb/0.0/mainnet01/cut" || exit 1
+HEALTHCHECK --start-period=5m --interval=1m --retries=5 --timeout=10s CMD ./check-health.sh
 
 CMD ./run-chainweb-node.sh
 
