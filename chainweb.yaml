@@ -120,7 +120,7 @@ logging:
     scope: []
     exception_limit: 10
     policy: discard
-  clusterId: lars
+  clusterId: docker-node
   amberdataBackend:
     enabled: false
   filter:
