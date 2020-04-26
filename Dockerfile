@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y librocksdb-dev curl xxd openssl
 # Install chainweb applications
 WORKDIR /chainweb
 # RUN curl -Ls "https://github.com/kadena-io/chainweb-node/releases/download/1.6/chainweb-1.6.ghc-8.6.5.ubuntu-18.04.16a279de.tar.gz" | tar -xzC "/chainweb/"
-RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.8.8.3.ubuntu-18.04.760df3ca.tar.gz" | tar -xzC "/chainweb/"
+RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.8.8.3.ubuntu-18.04.0efa2051.tar.gz" | tar -xzC "/chainweb/"
 
 COPY check-reachability.sh .
 COPY run-chainweb-node.sh .
