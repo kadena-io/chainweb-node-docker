@@ -1,3 +1,7 @@
+*Currently, this docker image runs a chainweb-node with the mining API disabled.
+It is possible to enable mining, as well as any other feature, by manually
+editing the configuration file in the container.*
+
 # Quick Setup
 
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
@@ -15,7 +19,7 @@
 4.  Start Chainweb node:
 
     ```sh
-    docker run -d -p 443:443 -v chainweb-db:target=/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node
+    docker run -d -p 443:443 -v chainweb-db:/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node
     ```
 
 For explanations and additional configuration options (like, for instance, using
