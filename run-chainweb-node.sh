@@ -4,7 +4,7 @@
 # PARAMETERS
 
 export CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
-export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-w1.chainweb.com}
+export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-e1.chainweb.com}
 export CHAINWEB_PORT=${CHAINWEB_PORT:-443}
 export LOGLEVEL=${LOGLEVEL:-warn}
 
@@ -42,7 +42,7 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 # ############################################################################ #
 # Run node
 
-./chainweb-node \
+exec ./chainweb-node \
     --config-file=chainweb.yaml \
     --hostname="$CHAINWEB_HOST" \
     --port="$CHAINWEB_PORT" \

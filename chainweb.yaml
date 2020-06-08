@@ -14,10 +14,6 @@ chainweb:
       limit: 1200
       miners: []
     nodeMining:
-      miner:
-        account: ''
-        predicate: keys-all
-        public-keys: []
       enabled: false
   p2p:
     peerDbFilePath: null
