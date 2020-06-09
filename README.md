@@ -1,7 +1,3 @@
-*Currently, this docker image runs a chainweb-node with the mining API disabled.
-It is possible to enable mining, as well as any other feature, by manually
-editing the configuration file in the container.*
-
 # Quick Setup
 
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
@@ -98,7 +94,7 @@ container is deleted. This could, for instance, happen when a new version of
 Chainweb is released and the node is upgraded to the new version.
 
 It is therefore recommended to store the Chainweb database outside the container
-in the file system of the host system or on a docker volume.
+on a docker volume (preferred method) or in the file system of the host system.
 
 ```sh
 # 1. Initialize a database that is persisted on a docker volume
@@ -119,6 +115,35 @@ docker run \
 Alternatively a bind mount can be used to persist the database in the file
 system of the host.
 
+# Enable Mining API
+
+The private mining API is enabled by providing the public key of a miner as
+environment variable in the container using the `-e` option of Docker's `run`
+command. Optionally, the miner account name can be given, too. If the account
+name is omitted the public key is used as account name.
+
+Only a single miner with a single is supported. The key predicate is `keys-all`.
+
+The following example provides a public miner key and an account name:
+
+```sh
+docker run \
+    --detach \
+    --publish 443:443 \
+    -e "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
+    -e "MINER_ACCOUNT=merle" \
+    --name chainweb-node \
+    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
+    kadena/chainweb-node
+```
+
+Please refer to the official [chainweb-miner](https://github.com/kadena-io/chainweb-miner)
+for a further information of how to use the mining API to mine on Chainweb. The
+official reference implementation does not support mining devices that are
+powerful enough to competitively mine on the Kadena Mainnet. Links to alternate
+mining software can be found
+[here](https://kadena-io.github.io/kadena-docs/Public-Chain-Docs/#start-mining).
+
 # Verifying database consistency
 
 TODO
@@ -128,6 +153,18 @@ TODO
 TODO
 
 # Technical Details
+
+This Docker image runs a chainweb-node using the public IP address of the host
+with self-signed certificates. It supports a single mining key. For many use
+cases this is sufficient.
+
+For more complex production setups it is recommended to clone the repository,
+edit the configuration file within the Docker container, and create an custom
+image.
+
+When a public domain name is used instead of a domain name, we recommend to use
+docker compose to run [certbot]() in a different container and share the
+certificates using docker volumes.
 
 ### Commands:
 
@@ -157,10 +194,19 @@ TODO
 *   `CHAINWEB_HOST`: the public IP address of the node. (default: automatically
     detected)
 
+*   `MINER_KEY`: the public key of the miner. If this is empty or unset
+    mining is disabled. Only a single key is supported with key predicate
+    `keys-all`.
+
+*   `MINER_ACCOUNT`: the mining account for the miner key. If unset or empty
+    the `MINER_KEY` is also used as account name.
+
 *   TODO:
     *    running a node with a DNS domain name
-    *    options for mining
-    *    overwriting the configuration file
+    *    option for setting the block gas limit
+    *    option for enabled the header stream
+    *    option for enabling the Rosetta API
+    *    explain how to overwrite the configuration file
 
 Here is an example for how to use these settings:
 
@@ -172,6 +218,6 @@ docker run \
     --env "CHAINWEB_PORT=1789" \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
-    chainweb-node-with-db
+    kadena/chainweb-node
 ```
 

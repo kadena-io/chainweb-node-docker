@@ -7,6 +7,8 @@ export CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
 export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-e1.chainweb.com}
 export CHAINWEB_PORT=${CHAINWEB_PORT:-443}
 export LOGLEVEL=${LOGLEVEL:-warn}
+export MINER_KEY=${MINER_KEY:-}
+export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
 
 if [[ -z "$CHAINWEB_HOST" ]] ; then
     CHAINWEB_HOST=$(curl -sL 'https://api.ipify.org?format=text')
@@ -40,12 +42,37 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 }
 
 # ############################################################################ #
+# Configure Miner
+
+if [[ -z "$MINER_KEY" ]] ; then
+export MINER_CONFIG="
+chainweb:
+  mining:
+    coordination:
+      enabled: ${MINING_ENABLED:-false}
+"
+else
+export MINER_CONFIG="
+chainweb:
+  mining:
+    coordination:
+      enabled: true
+      miners:
+        - account: $MINER_ACCOUNT
+          public-keys: [ $MINER_KEY ]
+          predicate: keys-all
+"
+fi
+
+# ############################################################################ #
 # Run node
 
 exec ./chainweb-node \
     --config-file=chainweb.yaml \
+    --config-file <(echo "$MINER_CONFIG") \
     --hostname="$CHAINWEB_HOST" \
     --port="$CHAINWEB_PORT" \
     --log-level="$LOGLEVEL" \
-    +RTS -N -t -A64M -H500M
+    +RTS -N -t -A64M -H500M -RTS \
+    "$@"
 
