@@ -6,13 +6,13 @@
 
 FROM ubuntu:18.04
 
-# install prerequesites
+# install prerequisites
 RUN apt-get update && apt-get install -y librocksdb-dev curl xxd openssl
 
 # Install chainweb applications
 WORKDIR /chainweb
-# RUN curl -Ls "https://github.com/kadena-io/chainweb-node/releases/download/1.6/chainweb-1.6.ghc-8.6.5.ubuntu-18.04.16a279de.tar.gz" | tar -xzC "/chainweb/"
-RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.8.8.3.ubuntu-18.04.affe0b4.tar.gz" | tar -xzC "/chainweb/"
+# RUN curl -Ls "https://github.com/kadena-io/chainweb-node/releases/download/<chaineweb-version>/<chainweb-binary-version>" | tar -xzC "/chainweb/"
+RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.8.6.5.ubuntu-18.04.d75df80.tar.gz" | tar -xzC "/chainweb/"
 
 COPY check-reachability.sh .
 COPY run-chainweb-node.sh .
@@ -26,4 +26,3 @@ EXPOSE 443
 HEALTHCHECK --start-period=5m --interval=1m --retries=5 --timeout=10s CMD ./check-health.sh
 
 CMD ./run-chainweb-node.sh
-

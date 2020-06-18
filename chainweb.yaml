@@ -97,6 +97,7 @@ chainweb:
     pruneChainDatabase: true
     fetchTimeout: 3000000
     initialCutHeightLimit: null
+  rosetta: true
 logging:
   telemetryBackend:
     enabled: true
