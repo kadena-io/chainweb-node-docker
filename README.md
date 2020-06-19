@@ -1,5 +1,10 @@
 # Quick Setup
 
+*[NOTE: the instructions in previous version of this README file initialized
+that database slightly different. If you have database volume that was created with
+such a version, you can continue to use it by mounting it via
+`-v chainweb-db:/data/chainweb-db` or just by using the old instructions]*
+
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
     router and configure port forwarding for port 443 to your computer.
 
@@ -9,13 +14,13 @@
     on node startup.)*:
 
     ```sh
-    docker run -ti --rm -v chainweb-db:/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node /chainweb/initialize-db.sh
+    docker run -ti --rm -v chainweb-data:/data kadena/chainweb-node /chainweb/initialize-db.sh
     ```
 
 4.  Start Chainweb node:
 
     ```sh
-    docker run -d -p 443:443 -v chainweb-db:/root/.local/share/chainweb-node/mainnet01/0/ kadena/chainweb-node
+    docker run -d -p 443:443 -v chainweb-data:/data kadena/chainweb-node
     ```
 
 For explanations and additional configuration options (like, for instance, using
@@ -99,7 +104,7 @@ on a docker volume (preferred method) or in the file system of the host system.
 ```sh
 # 1. Initialize a database that is persisted on a docker volume
 docker run -ti --rm \
-    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
+    --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node \
     /chainweb/initialize-db.sh
 
@@ -108,7 +113,7 @@ docker run \
     --detach \
     --publish 443:443 \
     --name chainweb-node \
-    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
+    --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
 ```
 
