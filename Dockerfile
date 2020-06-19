@@ -20,8 +20,11 @@ COPY initialize-db.sh .
 COPY chainweb.yaml .
 COPY check-health.sh .
 RUN chmod 755 check-reachability.sh run-chainweb-node.sh initialize-db.sh check-health.sh
+RUN mkdir -p /data/chainweb-db
+RUN mkdir -p /root/.local/share/chainweb-node/mainnet01/
+RUN ln -s /data/chainweb-db /root/.local/share/chainweb-node/mainnet01/0
 
-STOPSIGNAL SIGINT
+STOPSIGNAL SIGTERM
 EXPOSE 443
 HEALTHCHECK --start-period=5m --interval=1m --retries=5 --timeout=10s CMD ./check-health.sh
 

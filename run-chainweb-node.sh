@@ -42,6 +42,16 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 }
 
 # ############################################################################ #
+# Create chainweb catabase cirectory
+# 
+# the default database location is a symbolic link to the actual database
+# directory in /data. Data might be a mount, so make sure that /data/chainweb-db
+# exists and the link isn't broken.
+
+DBDIR="/data/chainweb-db"
+mkdir -p $DBDIR
+
+# ############################################################################ #
 # Configure Miner
 
 if [[ -z "$MINER_KEY" ]] ; then
