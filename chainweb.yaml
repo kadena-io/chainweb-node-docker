@@ -98,6 +98,9 @@ chainweb:
     fetchTimeout: 3000000
     initialCutHeightLimit: null
   rosetta: true
+  localApi:
+    interface: '*'
+    port: 1848
 logging:
   telemetryBackend:
     enabled: true
