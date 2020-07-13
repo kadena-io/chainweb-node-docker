@@ -20,7 +20,7 @@ such a version, you can continue to use it by mounting it via
 4.  Start Chainweb node:
 
     ```sh
-    docker run -d -p 443:443 -v chainweb-data:/data kadena/chainweb-node
+    docker run -d -p 1848:1848 -p 443:443 -v chainweb-data:/data kadena/chainweb-node
     ```
 
 For explanations and additional configuration options (like, for instance, using
@@ -34,7 +34,7 @@ only have to ensure that it can be reached on the default port 443. You can use
 the following shell command to start the node.
 
 ```sh
-docker run -d -p 443:443 kadena/chainweb-node
+docker run -d -p 1848:1848 -p 443:443 kadena/chainweb-node
 ```
 
 If you are running the node from a local network with NAT (network address
@@ -45,7 +45,7 @@ Using a different port is possible, too. For that the public port number must be
 provided the Chainweb node in the environment.
 
 ```sh
-docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" kadena/chainweb-node
+docker run -d -p 1848:1848 -p 1789:1789 -e "CHAINWEB_PORT=1789" kadena/chainweb-node
 ```
 
 More options to configure the node are described at the bottom of this document.
@@ -86,6 +86,7 @@ follows:
 ```sh
 docker run \
     --detach \
+    --publish 1848:1848 \
     --publish 443:443 \
     --name chainweb-node \
     chainweb-node-with-db \
@@ -111,6 +112,7 @@ docker run -ti --rm \
 # 2. Use the database volume with a Chainweb node
 docker run \
     --detach \
+    --publish 1848:1848 \
     --publish 443:443 \
     --name chainweb-node \
     --mount type=volume,source=chainweb-data,target=/data \
@@ -134,6 +136,7 @@ The following example provides a public miner key and an account name:
 ```sh
 docker run \
     --detach \
+    --publish 1848:1848 \
     --publish 443:443 \
     -e "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
     -e "MINER_ACCOUNT=merle" \
@@ -218,6 +221,7 @@ Here is an example for how to use these settings:
 ```sh
 docker run \
     --detach \
+    --publish 1848:1848 \
     --publish 1789:1789 \
     --name chainweb-node \
     --env "CHAINWEB_PORT=1789" \
