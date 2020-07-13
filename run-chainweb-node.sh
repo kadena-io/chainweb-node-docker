@@ -9,6 +9,7 @@ export CHAINWEB_PORT=${CHAINWEB_PORT:-443}
 export LOGLEVEL=${LOGLEVEL:-warn}
 export MINER_KEY=${MINER_KEY:-}
 export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
+export ENABLE_ROSETTA=${ENABLE_ROSETTA:-}
 
 if [[ -z "$CHAINWEB_HOST" ]] ; then
     CHAINWEB_HOST=$(curl -sL 'https://api.ipify.org?format=text')
@@ -42,8 +43,8 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 }
 
 # ############################################################################ #
-# Create chainweb catabase cirectory
-# 
+# Create chainweb database directory
+#
 # the default database location is a symbolic link to the actual database
 # directory in /data. Data might be a mount, so make sure that /data/chainweb-db
 # exists and the link isn't broken.
@@ -75,6 +76,15 @@ chainweb:
 fi
 
 # ############################################################################ #
+# Flags
+
+if [[ -n "$ROSETTA" ]] ; then
+    ROSETTA_FLAG="--rosetta"
+else
+    ROSETTA_FLAG="--no-rosetta"
+fi
+
+# ############################################################################ #
 # Run node
 
 exec ./chainweb-node \
@@ -82,6 +92,7 @@ exec ./chainweb-node \
     --config-file <(echo "$MINER_CONFIG") \
     --hostname="$CHAINWEB_HOST" \
     --port="$CHAINWEB_PORT" \
+    "$ROSETTA_FLAG" \
     --log-level="$LOGLEVEL" \
     +RTS -N -t -A64M -H500M -RTS \
     "$@"
