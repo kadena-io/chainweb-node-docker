@@ -6,6 +6,6 @@ DBDIR="/data/chainweb-db"
 # 
 
 # Install database
-mkdir -p "$DBDIR" && \
-curl "$DBURL" | tar -xzC "$DBDIR"
+mkdir -p "$DBDIR/0" && \
+curl "$DBURL" | tar -xzC "$DBDIR/0"
 

@@ -1,10 +1,5 @@
 # Quick Setup
 
-*[NOTE: the instructions in previous version of this README file initialized
-that database slightly different. If you have database volume that was created with
-such a version, you can continue to use it by mounting it via
-`-v chainweb-db:/data/chainweb-db` or just by using the old instructions]*
-
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
     router and configure port forwarding for port 443 to your computer.
 
@@ -51,28 +46,28 @@ docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" kadena/chainweb-node
 More options to configure the node are described at the bottom of this document.
 
 Above command starts the node with an empty Chainweb database. It will take
-about 12-24 hours until the node has "caught up" with the network, joined
+about 2-3 days until the node has "caught up" with the network, joined
 consensus, and can be used for mining and processing transactions.
 
-The startup time can be shortened by initializing the node with a pre-computed
-database. This is strongly encouraged and described further down in this
-document.
+The startup time can be shortened to a few minutes by initializing the node with
+a pre-computed database. This is strongly encouraged and described further down
+in this document.
 
 # Initialize Chainweb Database
 
 When the container is started for the first time it has to synchronize and
 rebuild the Chainweb database from the P2P network. This can take a long time.
-Currently, as of 2020-03-28, this takes about twelve hours for a node in a well
+Currently, as of 2020-09-17, this takes about 2-3 days for a node in a well
 connected data center.
 
-The container includes script for synchronizing a pre-build database, which
-currently, as of 2020-03-28, involves downloading about 4.5GB of data from an S3
+The container includes a script for synchronizing a pre-build database, which
+currently, as of 2020-09-17, involves downloading about 10GB of data from an S3
 container.
 
 ### Database within Chainweb node container
 
-The following shell commands initialize a docker container with a database and
-create a new image from it.
+The following shell commands initializes a docker container with a database and
+creates a new image from it.
 
 ```sh
 docker run -ti --name initialize-chainweb-db kadena/chainweb-node /chainweb/initialize-db.sh
@@ -135,10 +130,10 @@ The following example provides a public miner key and an account name:
 docker run \
     --detach \
     --publish 443:443 \
-    -e "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
-    -e "MINER_ACCOUNT=merle" \
+    --env "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
+    --env "MINER_ACCOUNT=merle" \
     --name chainweb-node \
-    --mount type=volume,source=chainweb-db,target=/root/.local/share/chainweb-node/mainnet01/0/ \
+    --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
 ```
 
@@ -148,6 +143,21 @@ official reference implementation does not support mining devices that are
 powerful enough to competitively mine on the Kadena Mainnet. Links to alternate
 mining software can be found
 [here](https://kadena-io.github.io/kadena-docs/Public-Chain-Docs/#start-mining).
+
+# Enable [Rosetta API](https://www.rosetta-api.org/)
+
+The chainweb node has optional support for the rosetta API, which can be enabled
+by setting the `ROSETTA` environment variable to any non-empty value.
+
+```sh
+docker run \
+    --detach \
+    --publish 443:443 \
+    --env "ROSETTA=1" \
+    --name chainweb-node \
+    --mount type=volume,source=chainweb-data,target=/data \
+    kadena/chainweb-node
+```
 
 # Verifying database consistency
 
@@ -194,7 +204,10 @@ certificates using docker volumes.
     connectivity of the container before starting the node. (default:
     `us-w1.chainweb.com`)
 
-*   `LOGLEVEL`: the log-level that is used by the Chainweb node. (default: `warn`).
+*   `LOGLEVEL`: the log-level that is used by the Chainweb node.
+    Possible  values are `quiet`, `error`, `warn`, `info`, and `debug`.
+    The value `debug` should be avoid during normal production.
+    (default: `warn`).
 
 *   `CHAINWEB_HOST`: the public IP address of the node. (default: automatically
     detected)
@@ -206,11 +219,13 @@ certificates using docker volumes.
 *   `MINER_ACCOUNT`: the mining account for the miner key. If unset or empty
     the `MINER_KEY` is also used as account name.
 
+*   `ROSETTA`: Any non-empty value enables the
+    [Rosetta API](https://www.rosetta-api.org/) of the Chainweb node (default: disabled).
+
 *   TODO:
     *    running a node with a DNS domain name
     *    option for setting the block gas limit
     *    option for enabled the header stream
-    *    option for enabling the Rosetta API
     *    explain how to overwrite the configuration file
 
 Here is an example for how to use these settings:
@@ -223,6 +238,10 @@ docker run \
     --env "CHAINWEB_PORT=1789" \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
+    --env "MINER_KEY=774723b442c6ee660a0ac34747374fcd451591a123b35df5f4a69f1e9cb2cc75" \
+    --env "MINER_ACCOUNT=merle" \
+    --env "ROSETTA=1" \
+    --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
 ```
 

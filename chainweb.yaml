@@ -1,4 +1,4 @@
-databaseDirectory: null
+databaseDirectory: /data/chainweb-db
 resetChainDatabases: false
 chainweb:
   throttling:
