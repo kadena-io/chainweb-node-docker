@@ -21,6 +21,15 @@
 For explanations and additional configuration options (like, for instance, using
 an alternate port) keep reading.
 
+# Minimal System Requirements
+
+*   CPU: 2 cores
+*   RAM: 4 GB
+*   Storage: 40 GB of free space (it is recommend to use SSD disks)
+*   Network: public IP address or port forwarding
+
+For instance AWS EC2 t3a.medium VMs with 50GB SSD root storage are known to work.
+
 # Running a Chainweb Node as Docker Container
 
 **A Chainweb node must be reachable from the public internet**. It needs a
