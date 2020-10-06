@@ -4,8 +4,8 @@ chainweb:
   throttling:
     local: 0.1
     mining: 2
-    global: 50.0
-    putPeer: 11
+    global: 200.0
+    putPeer: 21
   chainwebVersion: mainnet01
   mining:
     coordination:
