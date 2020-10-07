@@ -25,7 +25,7 @@ an alternate port) keep reading.
 
 *   CPU: 2 cores
 *   RAM: 4 GB
-*   Storage: 40 GB of free space (it is recommend to use SSD disks)
+*   Storage: 50 GB of free space (it is recommend to use SSD disks)
 *   Network: public IP address or port forwarding
 
 For instance AWS EC2 t3a.medium VMs with 50GB SSD root storage are known to work.
@@ -146,7 +146,8 @@ docker run \
     kadena/chainweb-node
 ```
 
-Please refer to the official [chainweb-miner](https://github.com/kadena-io/chainweb-miner)
+Please refer to the official
+[chainweb-mining-client](https://github.com/kadena-io/chainweb-mining-client)
 for a further information of how to use the mining API to mine on Chainweb. The
 official reference implementation does not support mining devices that are
 powerful enough to competitively mine on the Kadena Mainnet. Links to alternate
