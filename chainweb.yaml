@@ -26,11 +26,11 @@ chainweb:
         hostname: localhost
         port: 443
       keyFile: null
-    maxPeerCount: 50
+    maxPeerCount: 100
     private: false
     ignoreBootstrapNodes: true
-    maxSessionCount: 10
-    sessionTimeout: 240
+    maxSessionCount: 6
+    sessionTimeout: 300
     peers:
     - address:
         hostname: us-e1.chainweb.com
@@ -90,8 +90,8 @@ chainweb:
     enabled: true
     configuration:
       pollInterval: 30
-      maxSessionCount: 6
-      sessionTimeout: 240
+      maxSessionCount: 5
+      sessionTimeout: 300
   reintroTxs: true
   cuts:
     pruneChainDatabase: true
