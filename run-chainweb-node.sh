@@ -95,7 +95,7 @@ fi
 # Run node
 
 exec ./chainweb-node \
-    --config-file=chainweb.yaml \
+    --config-file="chainweb.${CHAINWEB_NETWORK}.yaml" \
     --config-file <(echo "$MINER_CONFIG") \
     --hostname="$CHAINWEB_HOST" \
     --port="$CHAINWEB_PORT" \
