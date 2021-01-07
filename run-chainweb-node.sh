@@ -5,16 +5,17 @@
 
 export CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
 export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-e1.chainweb.com}
-export CHAINWEB_PORT=${CHAINWEB_PORT:-443}
+export CHAINWEB_P2P_PORT=${CHAINWEB_P2P_PORT:-1789}
+export CHAINWEB_SERVICE_PORT=${CHAINWEB_SERVICE_PORT:-80}
 export LOGLEVEL=${LOGLEVEL:-warn}
 export MINER_KEY=${MINER_KEY:-}
 export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
 export ENABLE_ROSETTA=${ENABLE_ROSETTA:-}
 
-if [[ -z "$CHAINWEB_HOST" ]] ; then
-    CHAINWEB_HOST=$(curl -sL 'https://api.ipify.org?format=text')
+if [[ -z "$CHAINWEB_P2P_HOST" ]] ; then
+    CHAINWEB_P2P_HOST=$(curl -sL 'https://api.ipify.org?format=text')
 fi
-export CHAINWEB_HOST
+export CHAINWEB_P2P_HOST
 
 # ############################################################################ #
 # Check ulimit
@@ -36,9 +37,9 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
     exit 1
 }
 
-./check-reachability.sh "$CHAINWEB_HOST" "$CHAINWEB_PORT" ||
+./check-reachability.sh "$CHAINWEB_P2P_HOST" "$CHAINWEB_P2P_PORT" ||
 {
-    echo "Node is not reachable under its public host address $CHAINWEB_HOST:$CHAINWEB_PORT" 1>&2
+    echo "Node is not reachable under its public host address $CHAINWEB_P2P_HOST:$CHAINWEB_P2P_PORT" 1>&2
     exit 1
 }
 
@@ -88,8 +89,9 @@ fi
 exec ./chainweb-node \
     --config-file="chainweb.${CHAINWEB_NETWORK}.yaml" \
     --config-file <(echo "$MINER_CONFIG") \
-    --hostname="$CHAINWEB_HOST" \
-    --port="$CHAINWEB_PORT" \
+    --p2p-hostname="$CHAINWEB_P2P_HOST" \
+    --p2p-port="$CHAINWEB_P2P_PORT" \
+    --service-port="$CHAINWEB_SERVICE_PORT" \
     "$ROSETTA_FLAG" \
     --log-level="$LOGLEVEL" \
     +RTS -N -t -A64M -H500M -RTS \

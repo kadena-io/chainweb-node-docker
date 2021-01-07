@@ -1,7 +1,7 @@
 # Quick Setup
 
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
-    router and configure port forwarding for port 443 to your computer.
+    router and configure port forwarding for port 1789 to your computer.
 
 2.  Make sure that your firewall allows incoming connection on port 443.
 
@@ -15,7 +15,7 @@
 4.  Start Chainweb node:
 
     ```sh
-    docker run -d -p 443:443 -v chainweb-data:/data kadena/chainweb-node
+    docker run -d -P -v chainweb-data:/data kadena/chainweb-node
     ```
 
 For explanations and additional configuration options (like, for instance, using
@@ -34,22 +34,26 @@ For instance AWS EC2 t3a.medium VMs with 50GB SSD root storage are known to work
 
 **A Chainweb node must be reachable from the public internet**. It needs a
 public IP address and port. If you run the node from a data center, usually, you
-only have to ensure that it can be reached on the default port 443. You can use
+only have to ensure that it can be reached on the default P2P port *1789*. You can use
 the following shell command to start the node.
 
 ```sh
-docker run -d -p 443:443 kadena/chainweb-node
+docker run -d -p 80:80 -p 1789:1789 kadena/chainweb-node
 ```
+
+This exposes the P2P network on port 1789 and the API services of chainweb node
+on HTTP port 80.
 
 If you are running the node from a local network with NAT (network address
 translation), which is the case for most home networks, you'll have to configure
 port forwarding in your router.
 
-Using a different port is possible, too. For that the public port number must be
-provided the Chainweb node in the environment.
+Using different ports is possible, too. For that the public port number must be
+provided the Chainweb node in the environment. For instance, the following
+command exposes the P2P network on port 443.
 
 ```sh
-docker run -d -p 1789:1789 -e "CHAINWEB_PORT=1789" kadena/chainweb-node
+docker run -d -p 80:80 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
 ```
 
 More options to configure the node are described at the bottom of this document.
@@ -90,7 +94,8 @@ follows:
 ```sh
 docker run \
     --detach \
-    --publish 443:443 \
+    --publish 80:80 \
+    --publish 1789:1789 \
     --name chainweb-node \
     chainweb-node-with-db \
     /chainweb/run-chainweb-node.sh
@@ -115,7 +120,8 @@ docker run -ti --rm \
 # 2. Use the database volume with a Chainweb node
 docker run \
     --detach \
-    --publish 443:443 \
+    --publish 80:80 \
+    --publish 1789:1789 \
     --name chainweb-node \
     --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
@@ -138,7 +144,8 @@ The following example provides a public miner key and an account name:
 ```sh
 docker run \
     --detach \
-    --publish 443:443 \
+    --publish 80:80 \
+    --publish 1789:1789 \
     --env "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
     --env "MINER_ACCOUNT=merle" \
     --name chainweb-node \
@@ -162,12 +169,17 @@ by setting the `ROSETTA` environment variable to any non-empty value.
 ```sh
 docker run \
     --detach \
-    --publish 443:443 \
+    --publish 80:80 \
+    --publish 1789:1789 \
     --env "ROSETTA=1" \
     --name chainweb-node \
     --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
 ```
+
+# API Overview
+
+TODO
 
 # Verifying database consistency
 
@@ -205,10 +217,15 @@ certificates using docker volumes.
 
 ### Available Configuration Options
 
-*   `CHAINWEB_PORT`: the network port that is used by the Chainweb node.
-    The port that is used internally in the container *must* match the port that
-    is used publicly. A appropriate port mapping must be passed to the `docker
-    run` command, e.g. `-p 443:443`. (default: `443`)
+*   `CHAINWEB_P2P_PORT`: the network port that is used by the Chainweb P2P
+    network. The port that is used internally in the container *must* match the
+    port that is used publicly. A appropriate port mapping must be passed to the
+    `docker run` command, e.g. `-p 443:443`. (default: `1789`)
+
+*   `CHAINWEB_SERVICE_PORT`: the network port that is used by the Chainweb
+    REST Service API. The port that is used internally in the container *must* match
+    the port that is used publicly. A appropriate port mapping must be passed to
+    the `docker run` command, e.g. `-p 8000:8000`. (default: `80`)
 
 *   `CHAINWEB_BOOTSTRAP_NODE`: a Chainweb node that is used to check the
     connectivity of the container before starting the node. (default:
@@ -219,7 +236,7 @@ certificates using docker volumes.
     The value `debug` should be avoid during normal production.
     (default: `warn`).
 
-*   `CHAINWEB_HOST`: the public IP address of the node. (default: automatically
+*   `CHAINWEB_P2P_HOST`: the public IP address of the node. (default: automatically
     detected)
 
 *   `MINER_KEY`: the public key of the miner. If this is empty or unset
@@ -247,9 +264,11 @@ Here is an example for how to use these settings:
 ```sh
 docker run \
     --detach \
+    --publish 8000:8000 \
     --publish 1789:1789 \
     --name chainweb-node \
-    --env "CHAINWEB_PORT=1789" \
+    --env "CHAINWEB_P2P_PORT=1789" \
+    --env "CHAINWEB_SERVICE_PORT=8000" \
     --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
     --env "MINER_KEY=774723b442c6ee660a0ac34747374fcd451591a123b35df5f4a69f1e9cb2cc75" \
