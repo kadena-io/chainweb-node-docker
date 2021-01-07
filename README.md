@@ -238,6 +238,10 @@ certificates using docker volumes.
     *    option for enabled the header stream
     *    explain how to overwrite the configuration file
 
+Options for `/chainweb/initialize-db.sh`
+
+*   `DBURL`: The URL from where the database snapshot is downloaded
+
 Here is an example for how to use these settings:
 
 ```sh
