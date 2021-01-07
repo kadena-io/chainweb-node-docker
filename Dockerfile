@@ -38,13 +38,17 @@ RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb
 COPY check-reachability.sh .
 COPY run-chainweb-node.sh .
 COPY initialize-db.sh .
-COPY chainweb.yaml .
+COPY chainweb.mainnet01.yaml .
+COPY chainweb.testnet04.yaml .
+COPY chainweb.development.yaml .
 COPY check-health.sh .
 RUN chmod 755 check-reachability.sh run-chainweb-node.sh initialize-db.sh check-health.sh
 
 # Create Database directories
-RUN mkdir -p /data/chainweb-db
-RUN mkdir -p /root/.local/share/chainweb-node/mainnet01/
+RUN mkdir -p /data/chainweb-db \
+    mkdir -p /root/.local/share/chainweb-node/mainnet01/ \
+    mkdir -p /root/.local/share/chainweb-node/testnet04/ \
+    mkdir -p /root/.local/share/chainweb-node/development/
 
 # Command
 STOPSIGNAL SIGTERM
