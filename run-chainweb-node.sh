@@ -50,15 +50,6 @@ curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
 DBDIR="/data/chainweb-db"
 mkdir -p "$DBDIR/0"
 
-# upgrade docker data volume format from image version 2.1 to 2.1.1
-#
-if [[ -d "$DBDIR/rocksDb" ]] ; then
-    mv "$DBDIR/rocksDb" "$DBDIR/0/rocksDb"
-fi
-if [[ -d "$DBDIR/sqlite" ]] ; then
-    mv "$DBDIR/sqlite" "$DBDIR/0/sqlite"
-fi
-
 # ############################################################################ #
 # Configure Miner
 
