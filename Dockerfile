@@ -9,7 +9,7 @@ ARG UBUNTUVER=20.04
 
 FROM ubuntu:${UBUNTUVER}
 
-ARG REVISION=e0585c6
+ARG REVISION=15111ad
 ARG GHCVER=8.8.4
 ARG UBUNTUVER
 ARG STRIP=1
@@ -25,7 +25,6 @@ RUN apt-get update \
 
 # Install chainweb applications
 WORKDIR /chainweb
-RUN echo "DB URL: https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.${GHCVER}.ubuntu-${UBUNTUVER}.${REVISION}.tar.gz"
 RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.${GHCVER}.ubuntu-${UBUNTUVER}.${REVISION}.tar.gz" \
     | tar -xzC "/" \
         chainweb/chainweb-node \
