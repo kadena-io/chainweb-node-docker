@@ -11,6 +11,7 @@ export LOGLEVEL=${LOGLEVEL:-warn}
 export MINER_KEY=${MINER_KEY:-}
 export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
 export ENABLE_ROSETTA=${ENABLE_ROSETTA:-}
+export SKIP_REACHABILITY_CHECK=${SKIP_REACHABILITY_CHECK:-0}
 
 if [[ -z "$CHAINWEB_P2P_HOST" ]] ; then
     CHAINWEB_P2P_HOST=$(curl -sL 'https://api.ipify.org?format=text')
@@ -31,17 +32,21 @@ UL=$(ulimit -n -S)
 # ############################################################################ #
 # Check connectivity
 
-curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
-{
-    echo "Node is unable to connect the chainweb boostrap node: $CHAINWEB_BOOTSTRAP_NODE" 1>&2
-    exit 1
-}
+if [[ "$SKIP_REACHABILITY_CHECK" -lt 1 ]] ; then
+    curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
+    {
+        echo "Node is unable to connect the chainweb boostrap node: $CHAINWEB_BOOTSTRAP_NODE" 1>&2
+        exit 1
+    }
 
-./check-reachability.sh "$CHAINWEB_P2P_HOST" "$CHAINWEB_P2P_PORT" ||
-{
-    echo "Node is not reachable under its public host address $CHAINWEB_P2P_HOST:$CHAINWEB_P2P_PORT" 1>&2
-    exit 1
-}
+    ./check-reachability.sh "$CHAINWEB_P2P_HOST" "$CHAINWEB_P2P_PORT" ||
+    {
+        echo "Node is not reachable under its public host address $CHAINWEB_P2P_HOST:$CHAINWEB_P2P_PORT" 1>&2
+        exit 1
+    }
+else
+        echo "WARNING: skip reachability check"
+fi
 
 # ############################################################################ #
 # Create chainweb database directory
