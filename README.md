@@ -200,8 +200,8 @@ certificates using docker volumes.
 
 ### File System
 
-*   Database directory: `/root/.local/share/chainweb-node/mainnet01/0`
-*   Chainweb configuration file: `/chainweb/chainweb.yaml`
+*   Database directory: `/data/chainweb-db`
+*   Chainweb configuration file: `/chainweb/chainweb.mainnet01.yaml`
 
 ### Available Configuration Options
 
