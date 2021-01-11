@@ -51,8 +51,6 @@ RUN mkdir -p /data/chainweb-db \
 
 # Command
 STOPSIGNAL SIGTERM
-EXPOSE 80
-EXPOSE 1789
 HEALTHCHECK --start-period=5m --interval=1m --retries=5 --timeout=10s CMD ./check-health.sh
 
 CMD ./run-chainweb-node.sh
