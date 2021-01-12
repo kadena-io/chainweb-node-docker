@@ -31,7 +31,7 @@ chainweb:
     ignoreBootstrapNodes: true
     maxSessionCount: 6
     sessionTimeout: 300
-    peers:
+    peers: []
   transactionIndex:
     enabled: true
     configuration: {}
