@@ -90,7 +90,7 @@ chainweb:
     enabled: true
     configuration:
       pollInterval: 30
-      maxSessionCount: 4
+      maxSessionCount: 6
       sessionTimeout: 300
   reintroTxs: true
   cuts:
