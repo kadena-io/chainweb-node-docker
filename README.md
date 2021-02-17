@@ -3,7 +3,7 @@
 1.  *(Skip this step if you run the Chainweb node in data center.)* Log into your
     router and configure port forwarding for port 1789 to your computer.
 
-2.  Make sure that your firewall allows incoming connection on port 443.
+2.  Make sure that your firewall allows incoming connection on port 1789.
 
 3.  Initialize database *(optional but saves several hours of db synchronization
     on node startup.)*:
