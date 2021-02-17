@@ -8,8 +8,11 @@
 3.  Initialize database *(optional but saves several hours of db synchronization
     on node startup.)*:
 
+    First you need a database snapshot URL. See below, how to obtain a database
+    snapshot.
+
     ```sh
-    docker run -ti --rm -v chainweb-data:/data kadena/chainweb-node /chainweb/initialize-db.sh
+    docker run -ti --rm -e DBURL=YOUR_DB_SNAPSHOT_URL -v chainweb-data:/data kadena/chainweb-node /chainweb/initialize-db.sh
     ```
 
 4.  Start Chainweb node:
@@ -70,12 +73,41 @@ in this document.
 
 When the container is started for the first time it has to synchronize and
 rebuild the Chainweb database from the P2P network. This can take a long time.
-Currently, as of 2020-09-17, this takes about 2-3 days for a node in a well
+Currently, as of 2021-02-17, this takes about 2-3 days for a node in a well
 connected data center.
 
 The container includes a script for synchronizing a pre-build database, which
-currently, as of 2020-09-17, involves downloading about 10GB of data from an S3
-container.
+currently, as of 2021-02-17, involves downloading about 15GB of data.
+
+A database snapshot is just a gzipped tar archive of the Chainweb database,
+which contains the subdirectories `rocksDb` and `sqlite`. The URL can point to
+remote location or a local file. Any URL that curl understands is fine.
+
+Database snapshots are available from different sources. Kadena offers an
+up-to-date snapshot at
+https://kadena-node-db.s3.us-east-2.amazonaws.com/db-chainweb-node-ubuntu.18.04-latest.tar.gz.
+This file is stored in a request-pays S3 bucket. In order to access it you need
+an AWS account and you must create and signed URL for authenticating with S3.
+Details about how to do this can be found here:
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/ObjectsinRequesterPaysBuckets.html
+
+With `node.js` you can create a signed URL for above snapshot URL as follows:
+
+```js
+AWS = require("aws-sdk");
+s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: "us-east-2"
+})
+p = {
+  Bucket: 'kadena-node-db',
+  Expires: 3600,
+  Key: 'db-chainweb-node-ubuntu.18.04-latest.tar.gz',
+  RequestPayer: 'requester'
+}
+s3.getSignedUrl("getObject", p, console.log)
+```
 
 ### Database within Chainweb node container
 
@@ -83,7 +115,7 @@ The following shell commands initializes a docker container with a database and
 creates a new image from it.
 
 ```sh
-docker run -ti --name initialize-chainweb-db kadena/chainweb-node /chainweb/initialize-db.sh
+docker run -ti --name initialize-chainweb-db -e DBURL=YOUR_DB_SNAPSHOT_URL kadena/chainweb-node /chainweb/initialize-db.sh
 docker commit `docker ps -a -f 'name=initialize-chainweb-db' -q` chainweb-node-with-db
 docker rm initialize-chainweb-db
 ```
@@ -114,6 +146,7 @@ on a docker volume (preferred method) or in the file system of the host system.
 # 1. Initialize a database that is persisted on a docker volume
 docker run -ti --rm \
     --mount type=volume,source=chainweb-data,target=/data \
+    --env DBURL=YOUR_DB_SNAPSHOT_URL \
     kadena/chainweb-node \
     /chainweb/initialize-db.sh
 
@@ -257,8 +290,8 @@ certificates using docker volumes.
 
 Options for `/chainweb/initialize-db.sh`
 
-*   `DBURL`: The URL from where the database snapshot (in tar.gz format) is
-    downloaded. We recommend that users maintain there own database snapshots.
+*   `DBURL`: The URL from where the database snapshot is downloaded. We
+    recommend that users maintain there own database snapshots.
 
 Here is an example for how to use these settings:
 
