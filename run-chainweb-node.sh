@@ -6,7 +6,7 @@
 export CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
 export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-e1.chainweb.com}
 export CHAINWEB_P2P_PORT=${CHAINWEB_P2P_PORT:-1789}
-export CHAINWEB_SERVICE_PORT=${CHAINWEB_SERVICE_PORT:-80}
+export CHAINWEB_SERVICE_PORT=${CHAINWEB_SERVICE_PORT:-1848}
 export LOGLEVEL=${LOGLEVEL:-warn}
 export MINER_KEY=${MINER_KEY:-}
 export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
@@ -33,7 +33,7 @@ UL=$(ulimit -n -S)
 # Check connectivity
 
 if [[ "$SKIP_REACHABILITY_CHECK" -lt 1 ]] ; then
-    curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/info" > /dev/null ||
+    curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/chainweb/0.0/$CHAINWEB_NETWORK/cut" > /dev/null ||
     {
         echo "Node is unable to connect the chainweb boostrap node: $CHAINWEB_BOOTSTRAP_NODE" 1>&2
         exit 1

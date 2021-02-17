@@ -15,7 +15,7 @@
 4.  Start Chainweb node:
 
     ```sh
-    docker run -d -P -v chainweb-data:/data kadena/chainweb-node
+    docker run -d -p 1789:1789 -p 1848:1848 -v chainweb-data:/data kadena/chainweb-node
     ```
 
 For explanations and additional configuration options (like, for instance, using
@@ -38,7 +38,7 @@ only have to ensure that it can be reached on the default P2P port *1789*. You c
 the following shell command to start the node.
 
 ```sh
-docker run -d -p 80:80 -p 1789:1789 kadena/chainweb-node
+docker run -d -p 1848:1848 -p 1789:1789 kadena/chainweb-node
 ```
 
 This exposes the P2P network on port 1789 and the API services of chainweb node
@@ -49,11 +49,11 @@ translation), which is the case for most home networks, you'll have to configure
 port forwarding in your router.
 
 Using different ports is possible, too. For that the public port number must be
-provided the Chainweb node in the environment. For instance, the following
+provided to the Chainweb node in the environment. For instance, the following
 command exposes the P2P network on port 443.
 
 ```sh
-docker run -d -p 80:80 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
+docker run -d -p 1848:1848 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
 ```
 
 More options to configure the node are described at the bottom of this document.
@@ -94,7 +94,7 @@ follows:
 ```sh
 docker run \
     --detach \
-    --publish 80:80 \
+    --publish 1848:1848 \
     --publish 1789:1789 \
     --name chainweb-node \
     chainweb-node-with-db \
@@ -120,7 +120,7 @@ docker run -ti --rm \
 # 2. Use the database volume with a Chainweb node
 docker run \
     --detach \
-    --publish 80:80 \
+    --publish 1848:1848 \
     --publish 1789:1789 \
     --name chainweb-node \
     --mount type=volume,source=chainweb-data,target=/data \
@@ -144,7 +144,7 @@ The following example provides a public miner key and an account name:
 ```sh
 docker run \
     --detach \
-    --publish 80:80 \
+    --publish 1848:1848 \
     --publish 1789:1789 \
     --env "MINER_KEY=26a9285cd8db34702cfef27a5339179b5a26373f03dd94e2096b0b3ba6c417da" \
     --env "MINER_ACCOUNT=merle" \
@@ -169,7 +169,7 @@ by setting the `ROSETTA` environment variable to any non-empty value.
 ```sh
 docker run \
     --detach \
-    --publish 80:80 \
+    --publish 1848:1848 \
     --publish 1789:1789 \
     --env "ROSETTA=1" \
     --name chainweb-node \
@@ -257,7 +257,8 @@ certificates using docker volumes.
 
 Options for `/chainweb/initialize-db.sh`
 
-*   `DBURL`: The URL from where the database snapshot is downloaded
+*   `DBURL`: The URL from where the database snapshot (in tar.gz format) is
+    downloaded. We recommend that users maintain there own database snapshots.
 
 Here is an example for how to use these settings:
 

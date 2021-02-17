@@ -5,7 +5,7 @@ chainweb:
     local: 0.1
     mining: 2
     global: 200.0
-    putPeer: 21
+    putPeer: 30
   chainwebVersion: mainnet01
   mining:
     coordination:
@@ -29,7 +29,7 @@ chainweb:
     maxPeerCount: 100
     private: false
     ignoreBootstrapNodes: true
-    maxSessionCount: 6
+    maxSessionCount: 8
     sessionTimeout: 300
     peers:
     - address:
