@@ -94,19 +94,36 @@ https://docs.aws.amazon.com/AmazonS3/latest/userguide/ObjectsinRequesterPaysBuck
 With `node.js` you can create a signed URL for above snapshot URL as follows:
 
 ```js
+// get-chainweb-image-url.js
 AWS = require("aws-sdk");
-s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+const s3 = new AWS.S3({
+  accessKeyId: AWS_ACCESS_KEY_ID, // Add your Access Key ID from IAM
+  secretAccessKey: AWS_SECRET_ACCESS_KEY, // Add your Secret Access Key from IAM
   region: "us-east-2"
 })
-p = {
+const params = {
   Bucket: 'kadena-node-db',
   Expires: 3600,
   Key: 'db-chainweb-node-ubuntu.18.04-latest.tar.gz',
   RequestPayer: 'requester'
 }
-s3.getSignedUrl("getObject", p, console.log)
+// When ran, the script will output exclusively the signed url
+s3.getSignedUrl("getObject", params, (_err, res) => console.log(res))
+```
+
+With Python one can use the following code:
+
+```python
+import boto3
+client = boto3.client('s3')
+url  = client.generate_presigned_url(
+    "get_object",
+    Params = {
+        "Bucket":"kadena-node-db",
+        "Key":"db-chainweb-node-ubuntu.18.04-latest.tar.gz",
+        "RequestPayer":'requester'
+    }
+)
 ```
 
 ### Database within Chainweb node container
@@ -115,7 +132,9 @@ The following shell commands initializes a docker container with a database and
 creates a new image from it.
 
 ```sh
-docker run -ti --name initialize-chainweb-db -e DBURL=YOUR_DB_SNAPSHOT_URL kadena/chainweb-node /chainweb/initialize-db.sh
+npm install aws-sdk
+YOUR_DB_SNAPSHOT_URL=$(node get-chainweb-image-url.js) # assuming you use get-chainweb-image-url.js form above
+docker run -ti --name initialize-chainweb-db -e DBURL=$YOUR_DB_SNAPSHOT_URL kadena/chainweb-node /chainweb/initialize-db.sh
 docker commit `docker ps -a -f 'name=initialize-chainweb-db' -q` chainweb-node-with-db
 docker rm initialize-chainweb-db
 ```
@@ -143,14 +162,18 @@ It is therefore recommended to store the Chainweb database outside the container
 on a docker volume (preferred method) or in the file system of the host system.
 
 ```sh
-# 1. Initialize a database that is persisted on a docker volume
+# 1. Get signed database snapshot URL (assuming you use get-chainweb-image-url.js form above)
+npm install aws-sdk
+YOUR_DB_SNAPSHOT_URL=$(node get-chainweb-image-url.js)
+
+# 2. Initialize a database that is persisted on a docker volume
 docker run -ti --rm \
     --mount type=volume,source=chainweb-data,target=/data \
-    --env DBURL=YOUR_DB_SNAPSHOT_URL \
+    --env DBURL=$YOUR_DB_SNAPSHOT_URL \
     kadena/chainweb-node \
     /chainweb/initialize-db.sh
 
-# 2. Use the database volume with a Chainweb node
+# 3. Use the database volume with a Chainweb node
 docker run \
     --detach \
     --publish 1848:1848 \
