@@ -35,6 +35,18 @@ For instance AWS EC2 t3a.medium VMs with 50GB SSD root storage are known to work
 
 # Running a Chainweb Node as Docker Container
 
+A Chainweb node serves two separate APIs:
+
+1.  The P2P API includes all endpoints that are used for node-to-node
+    communication. It is served via HTTPS and must be reachable from the public
+    internet.
+
+2.  The Service API includes all routes that off Kadena chainweb services to
+    users and applications. It is served as plain (unencrypted) HTTP and can
+    kept private. It is also possible to use this API with a reverse proxy.
+
+More details about these APIs can be found further down in this document.
+
 **A Chainweb node must be reachable from the public internet**. It needs a
 public IP address and port. If you run the node from a data center, usually, you
 only have to ensure that it can be reached on the default P2P port *1789*. You can use
@@ -44,16 +56,16 @@ the following shell command to start the node.
 docker run -d -p 1848:1848 -p 1789:1789 kadena/chainweb-node
 ```
 
-This exposes the P2P network on port 1789 and the API services of chainweb node
-on HTTP port 80.
+This exposes the P2P network on HTTPS port 1789 and the API services of chainweb
+node on HTTP port 1848.
 
 If you are running the node from a local network with NAT (network address
 translation), which is the case for most home networks, you'll have to configure
-port forwarding in your router.
+port forwarding for the P2P port (1789) in your router.
 
-Using different ports is possible, too. For that the public port number must be
-provided to the Chainweb node in the environment. For instance, the following
-command exposes the P2P network on port 443.
+Using different ports is possible, too, as long as the internal and external
+port of the docker container match. For instance, the following command exposes
+the P2P network on port 443.
 
 ```sh
 docker run -d -p 1848:1848 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
@@ -334,4 +346,22 @@ docker run \
     --mount type=volume,source=chainweb-data,target=/data \
     kadena/chainweb-node
 ```
+
+### API Endpoints
+
+P2P API (inter-node communication)
+
+*   cut endpoint
+*   chain header endpoints
+*   chain payload endpoints
+*   chain mempool endpoints
+
+Service API
+
+*   Pact endpoints
+*   Mining endpoints
+*   Rosetta endpoints
+*   header-update-stream endpoint
+*   info endpoint
+*   health-check endpoint
 
