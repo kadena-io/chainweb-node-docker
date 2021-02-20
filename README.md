@@ -285,15 +285,19 @@ certificates using docker volumes.
 
 ### Available Configuration Options
 
+The following environment variables can be used to configured the image using
+the `--env` option of `docker run`.
+
 *   `CHAINWEB_P2P_PORT`: the network port that is used by the Chainweb P2P
     network. The port that is used internally in the container *must* match the
     port that is used publicly. A appropriate port mapping must be passed to the
     `docker run` command, e.g. `-p 443:443`. (default: `1789`)
 
 *   `CHAINWEB_SERVICE_PORT`: the network port that is used by the Chainweb
-    REST Service API. The port that is used internally in the container *must* match
-    the port that is used publicly. A appropriate port mapping must be passed to
-    the `docker run` command, e.g. `-p 8000:8000`. (default: `80`)
+    REST Service API. Usually, there is no need to change the default value,
+    because the internal port can be mapped to some external port by passing a
+    port mapping to the `docker run` command, e.g. `-p 1848:80`. (default:
+    `1848`)
 
 *   `CHAINWEB_BOOTSTRAP_NODE`: a Chainweb node that is used to check the
     connectivity of the container before starting the node. (default:
@@ -333,7 +337,7 @@ Here is an example for how to use these settings:
 ```sh
 docker run \
     --detach \
-    --publish 8000:8000 \
+    --publish 8000:80 \
     --publish 1789:1789 \
     --name chainweb-node \
     --env "CHAINWEB_P2P_PORT=1789" \
