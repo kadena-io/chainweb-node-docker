@@ -41,7 +41,7 @@ A Chainweb node serves two separate APIs:
     communication. It is served via HTTPS and must be reachable from the public
     internet.
 
-2.  The Service API includes all routes that off Kadena chainweb services to
+2.  The Service API includes all routes that off Kadena Chainweb services to
     users and applications. It is served as plain (unencrypted) HTTP and can
     kept private. It is also possible to use this API with a reverse proxy.
 
@@ -56,19 +56,20 @@ the following shell command to start the node.
 docker run -d -p 1848:1848 -p 1789:1789 kadena/chainweb-node
 ```
 
-This exposes the P2P network on HTTPS port 1789 and the API services of chainweb
+This exposes the P2P network on HTTPS port 1789 and the API services of Chainweb
 node on HTTP port 1848.
 
 If you are running the node from a local network with NAT (network address
 translation), which is the case for most home networks, you'll have to configure
 port forwarding for the P2P port (1789) in your router.
 
-Using different ports is possible, too, as long as the internal and external
-port of the docker container match. For instance, the following command exposes
-the P2P network on port 443.
+Using different ports is possible, too. For the P2P API the internal and external
+port of the docker container must match and the internal P2P port can be changed
+using the `CHAINWEB_P2P_PORT` environment variable. For instance, the following
+command exposes the P2P network on port 443.
 
 ```sh
-docker run -d -p 1848:1848 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
+docker run -d -p 1848:80 -p 443:443 -e "CHAINWEB_P2P_PORT=443" kadena/chainweb-node
 ```
 
 More options to configure the node are described at the bottom of this document.
@@ -353,19 +354,18 @@ docker run \
 
 ### API Endpoints
 
-P2P API (inter-node communication)
+P2P API endpoints (HTTPS, inter-node communication):
 
-*   cut endpoint
-*   chain header endpoints
-*   chain payload endpoints
-*   chain mempool endpoints
+* `^/chainweb/0.0/mainnet01/cut`
+* `^/chainweb/0.0/mainnet01/chain/[0-9]+/(header|hash|branch|payload)`
+* `^/chainweb/0.0/mainnet01/chain/[0-9]+/mempool`
 
-Service API
+Service API endpoints (HTTP):
 
-*   Pact endpoints
-*   Mining endpoints
-*   Rosetta endpoints
-*   header-update-stream endpoint
-*   info endpoint
-*   health-check endpoint
+* `^/info`
+* `^/health-check`
+* `^/chainweb/0.0/mainnet01/chain/[0-9]+/pact/`
+* `^/chainweb/0.0/mainnet01/rosetta/`
+* `^/chainweb/0.0/mainnet01/header/updates`
+* `^/chainweb/0.0/mainnet01/mining/`
 
