@@ -365,7 +365,14 @@ Service API endpoints (HTTP):
 * `^/info`
 * `^/health-check`
 * `^/chainweb/0.0/mainnet01/chain/[0-9]+/pact/`
-* `^/chainweb/0.0/mainnet01/rosetta/`
-* `^/chainweb/0.0/mainnet01/header/updates`
-* `^/chainweb/0.0/mainnet01/mining/`
+* `^/chainweb/0.0/mainnet01/rosetta/` (optional, off by default)
+* `^/chainweb/0.0/mainnet01/header/updates` (optional, off by default)
+* `^/chainweb/0.0/mainnet01/mining/` (optional, off by default)
+
+Only the endpoints that are required for inter-node communication are included
+in the P2P API. The port of the P2P must be publicly available.
+
+All endpoints that are not used for inter-node communication are included in to
+the service API. It is up to the node operator to decide if and how to make the
+service API available to users.
 
