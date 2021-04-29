@@ -300,10 +300,6 @@ the `--env` option of `docker run`.
     port mapping to the `docker run` command, e.g. `-p 1848:80`. (default:
     `1848`)
 
-*   `CHAINWEB_BOOTSTRAP_NODE`: a Chainweb node that is used to check the
-    connectivity of the container before starting the node. (default:
-    `us-w1.chainweb.com`)
-
 *   `LOGLEVEL`: the log-level that is used by the Chainweb node.
     Possible  values are `quiet`, `error`, `warn`, `info`, and `debug`.
     The value `debug` should be avoid during normal production.
@@ -325,7 +321,7 @@ the `--env` option of `docker run`.
 *   TODO:
     *    running a node with a DNS domain name
     *    option for setting the block gas limit
-    *    option for enabled the header stream
+    *    option to enable the header stream
     *    explain how to overwrite the configuration file
 
 Options for `/chainweb/initialize-db.sh`
@@ -343,7 +339,6 @@ docker run \
     --name chainweb-node \
     --env "CHAINWEB_P2P_PORT=1789" \
     --env "CHAINWEB_SERVICE_PORT=8000" \
-    --env "CHAINWEB_BOOTSTRAP_NODE=fr2.chainweb.com" \
     --env "LOGLEVEL=warn" \
     --env "MINER_KEY=774723b442c6ee660a0ac34747374fcd451591a123b35df5f4a69f1e9cb2cc75" \
     --env "MINER_ACCOUNT=merle" \
@@ -375,4 +370,6 @@ in the P2P API. The port of the P2P must be publicly available.
 All endpoints that are not used for inter-node communication are included in to
 the service API. It is up to the node operator to decide if and how to make the
 service API available to users.
+
+A detailed documentation of the API is available at https://api.chainweb.com.
 

@@ -4,7 +4,6 @@
 # PARAMETERS
 
 export CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
-export CHAINWEB_BOOTSTRAP_NODE=${CHAINWEB_BOOTSTRAP_NODE:-us-e1.chainweb.com}
 export CHAINWEB_P2P_PORT=${CHAINWEB_P2P_PORT:-1789}
 export CHAINWEB_SERVICE_PORT=${CHAINWEB_SERVICE_PORT:-1848}
 export LOGLEVEL=${LOGLEVEL:-warn}
@@ -14,7 +13,7 @@ export ENABLE_ROSETTA=${ENABLE_ROSETTA:-}
 export SKIP_REACHABILITY_CHECK=${SKIP_REACHABILITY_CHECK:-0}
 
 if [[ -z "$CHAINWEB_P2P_HOST" ]] ; then
-    CHAINWEB_P2P_HOST=$(curl -sL 'https://api.ipify.org?format=text')
+    CHAINWEB_P2P_HOST="0.0.0.0"
 fi
 export CHAINWEB_P2P_HOST
 
@@ -28,25 +27,6 @@ UL=$(ulimit -n -S)
     echo "Try starting the container with '--ulimit \"nofile=65536:65536\"'" 1>&2
     exit 1
 }
-
-# ############################################################################ #
-# Check connectivity
-
-if [[ "$SKIP_REACHABILITY_CHECK" -lt 1 ]] ; then
-    curl -fsL "https://$CHAINWEB_BOOTSTRAP_NODE/chainweb/0.0/$CHAINWEB_NETWORK/cut" > /dev/null ||
-    {
-        echo "Node is unable to connect the chainweb boostrap node: $CHAINWEB_BOOTSTRAP_NODE" 1>&2
-        exit 1
-    }
-
-    ./check-reachability.sh "$CHAINWEB_P2P_HOST" "$CHAINWEB_P2P_PORT" ||
-    {
-        echo "Node is not reachable under its public host address $CHAINWEB_P2P_HOST:$CHAINWEB_P2P_PORT" 1>&2
-        exit 1
-    }
-else
-        echo "WARNING: skip reachability check"
-fi
 
 # ############################################################################ #
 # Create chainweb database directory

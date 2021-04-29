@@ -23,68 +23,17 @@ chainweb:
       interface: '*'
       certificateChain: null
       hostaddress:
-        hostname: localhost
+        hostname: "0.0.0.0"
         port: 443
       keyFile: null
-    maxPeerCount: 100
+    maxPeerCount: 1000
     private: false
-    ignoreBootstrapNodes: true
+    ignoreBootstrapNodes: false
     maxSessionCount: 8
     sessionTimeout: 300
-    peers:
-    - address:
-        hostname: us-e1.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: us-e2.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: us-e3.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: us-w1.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: us-w2.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: us-w3.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: fr1.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: fr2.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: fr3.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: jp1.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: jp2.chainweb.com
-        port: 443
-      id: null
-    - address:
-        hostname: jp3.chainweb.com
-        port: 443
-      id: null
   transactionIndex:
     enabled: true
     configuration: {}
-  nodeId:
-    _nodeIdId: 0
   headerStream: false
   mempoolP2p:
     enabled: true
