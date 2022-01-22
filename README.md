@@ -28,10 +28,11 @@ an alternate port) keep reading.
 
 *   CPU: 2 cores
 *   RAM: 4 GB
-*   Storage: 50 GB of free space (it is recommend to use SSD disks)
+*   Storage: 150 GB of free space (it is recommend to use SSD disks)
 *   Network: public IP address or port forwarding
 
-For instance AWS EC2 t3a.medium VMs with 50GB SSD root storage are known to work.
+For instance AWS EC2 t3a.medium VMs with 150GB SSD root storage are known to work.
+Fast HDD disks are fine to, but should provide good IOPS values.
 
 # Running a Chainweb Node as Docker Container
 
