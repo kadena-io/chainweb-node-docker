@@ -20,8 +20,12 @@ LABEL ubuntu="$UBUNTUVER"
 
 # install prerequisites
 RUN apt-get update \
-    && apt-get install -y librocksdb-dev curl xxd openssl binutils \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y librocksdb-dev curl xxd openssl binutils locales \
+    && rm -rf /var/lib/apt/lists/* \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
+ENV LANG=en_US.UTF-8
 
 # Install chainweb applications
 WORKDIR /chainweb
