@@ -13,6 +13,6 @@ CHAINWEB_NETWORK=${CHAINWEB_NETWORK:-mainnet01}
 
 if [[ "$CHAINWEB_NETWORK" = "mainnet01" ]] ; then
     mkdir -p "$DBDIR/0" && \
-    curl "$DBURL" | tar -xzC "$DBDIR/0"
+    curl "$DBURL" | tar -xC "$DBDIR/0"
 fi
 
