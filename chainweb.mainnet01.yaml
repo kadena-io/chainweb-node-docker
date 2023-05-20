@@ -4,7 +4,7 @@ chainweb:
   throttling:
     local: 0.1
     mining: 2
-    global: 200.0
+    global: 1000.0
     putPeer: 30
   chainwebVersion: mainnet01
   mining:
@@ -34,7 +34,8 @@ chainweb:
   transactionIndex:
     enabled: true
     configuration: {}
-  headerStream: false
+  headerStream: true
+  allowReadsInLocal: true
   mempoolP2p:
     enabled: true
     configuration:
