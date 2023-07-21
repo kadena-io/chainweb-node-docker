@@ -29,7 +29,7 @@ ENV LANG=en_US.UTF-8
 
 # Install chainweb applications
 WORKDIR /chainweb
-RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.${GHCVER}.ubuntu-${UBUNTUVER}.${REVISION}.tar.gz" \
+RUN curl -Ls "https://kadena-cabal-cache.s3.amazonaws.com/chainweb-node/chainweb.false.${GHCVER}.ubuntu-${UBUNTUVER}.${REVISION}.tar.gz" \
     | tar -xzC "/" \
         chainweb/chainweb-node \
         chainweb/LICENSE \
