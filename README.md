@@ -105,6 +105,8 @@ an AWS account and you must create and signed URL for authenticating with S3.
 Details about how to do this can be found here:
 https://docs.aws.amazon.com/AmazonS3/latest/userguide/ObjectsinRequesterPaysBuckets.html
 
+Kaddex also offers database snapshots, free of charge, available at: https://chainweb-data.kda.kaddex.xyz/.
+
 With `node.js` you can create a signed URL for above snapshot URL as follows:
 
 ```js
