@@ -56,8 +56,10 @@ jobs:
           git config --local user.name "Kadena DevOps"
           git config --local user.email "devops@kadena.io"
           git add Dockerfile
-          git commit -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
           git tag chainweb-${{ inputs.VERSION_NEW }}
+          git commit --allow-empty -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
+          # allow empty in case this is a re-run
+          git status
           git push origin chainweb-${{ inputs.VERSION_NEW }}
 
       - name: Validate SHAs
