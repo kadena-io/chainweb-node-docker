@@ -1,0 +1,73 @@
+name: Release - Bump and Publish Version
+
+## Release automation for chainweb-node
+# Designed to run systems in chainweb/binary-release 
+
+## Currently has manual version setting and creates draft releases;
+# when we are confident in this process, it can auto-increment and publish non-drafts
+# tbd: connect k8s firing mechanism, create and connect chainweb-node-docker update workflow
+
+run-name: "Release chainweb-node ${{ inputs.release_sha }} from ${{ github.sha}}"
+on:
+  workflow_dispatch:
+    inputs:
+      SHORT_SHA:
+        description: "hash of chainweb-node release, default to branch running this job"
+        type: string
+        required: true
+      VERSION_NEW:
+        description: "The X.Y.Z tag for the new version"
+        type: string
+        required: true
+  
+jobs:
+  Build-Push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: kadena-io/chainweb-node-docker
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+          
+      - name: Update Dockerfile reference sha
+        run: |
+          echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
+          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_REVISION }}/" Dockerfile
+          
+      - name: Build and push ubuntu image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: kadena/chainweb-node:${{ inputs.VERSION_NEW }},kadena/chainweb-node:latest
+          
+      - name: Test run docker image
+        run: |
+          docker run --rm kadena/chainweb-node:${{ inputs.VERSION_NEW }} ./chainweb-node --version
+
+      - name: Update master branch with dockerfile version
+        run: |
+          git config --local user.name "Kadena DevOps"
+          git config --local user.email "devops@kadena.io"
+          git add Dockerfile
+          git commit -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
+          git tag chainweb-${{ inputs.VERSION_NEW }}
+          git push
+
+      - name: Validate SHAs
+        run: |
+          ## spit these to output
+          digest1=$(docker inspect kadena/chainweb-node:${{ inputs.VERSION_NEW }} --format '{{ .RepoDigests }}')
+          digest2=$(docker inspect kadena/chainweb-node:latest --format '{{ .RepoDigests }}')
+          if [[ $digest1 != $digest2 ]]; then
+            echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_ENV
+            exit 1
+          fi
+          echo "DOCKERHUB_SHA=$digest1" >> $GITHUB_ENV
+          echo "DOCKERHUB_SHA=$digest1"
