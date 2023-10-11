@@ -37,7 +37,7 @@ jobs:
       - name: Update Dockerfile reference sha
         run: |
           echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
-          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_REVISION }}/" Dockerfile
+          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
           
       - name: Build and push ubuntu image
         uses: docker/build-push-action@v5
