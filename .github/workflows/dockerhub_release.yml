@@ -91,7 +91,8 @@ jobs:
           git commit --allow-empty -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
           # allow empty in case this is a re-run
           git status
-          git push origin chainweb-${{ inputs.VERSION_NEW }}
+          git push origin --tags
+          git push
 
       - name: Validate SHAs
         id: validate-sha
@@ -105,5 +106,7 @@ jobs:
             echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_OUTPUT
             exit 1
           fi
+          echo "Digest compare succeeded, new tags match"
+          echo "$digest1 and $digest2"
           echo "DOCKERHUB_SHA=$digest1" >> $GITHUB_OUTPUT
-          echo $digest1
+          echo "Pushed to github output"
