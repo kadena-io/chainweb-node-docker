@@ -91,8 +91,8 @@ jobs:
           git commit --allow-empty -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
           # allow empty in case this is a re-run
           git status
-          git push origin --tags
           git push
+          git push origin --tags
 
       - name: Validate SHAs
         id: validate-sha
