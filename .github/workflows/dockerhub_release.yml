@@ -92,6 +92,8 @@ jobs:
         id: validate-sha
         run: |
           ## spit these to output
+          docker pull kadena/chainweb-node:${{ inputs.VERSION_NEW }}
+          docker pull kadena/chainweb-node:latest 
           digest1=$(docker inspect kadena/chainweb-node:${{ inputs.VERSION_NEW }} --format '{{ .RepoDigests }}')
           digest2=$(docker inspect kadena/chainweb-node:latest --format '{{ .RepoDigests }}')
           if [[ $digest1 != $digest2 ]]; then
