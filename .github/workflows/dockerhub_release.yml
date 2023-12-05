@@ -103,7 +103,7 @@ jobs:
           digest1=$(docker inspect kadena/chainweb-node:${{ inputs.VERSION_NEW }} --format '{{ .RepoDigests }}')
           digest2=$(docker inspect kadena/chainweb-node:latest --format '{{ .RepoDigests }}')
           echo "$digest1 and $digest2"
-          if [[ $digest1 != $digest2 ]]; then
+          if [[ "$digest1" != "$digest2" ]]; then
             echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_OUTPUT
             echo "sha mismatch between pushed images"
             exit 1
