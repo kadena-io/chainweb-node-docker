@@ -19,7 +19,16 @@ on:
         description: "The X.Y.Z tag for the new version"
         type: string
         required: true
-  
+  workflow_call:
+    inputs:
+      SHORT_SHA:
+        description: "hash of chainweb-node release, default to branch running this job"
+        type: string
+        required: true
+      VERSION_NEW:
+        description: "The X.Y.Z tag for the new version"
+        type: string
+        required: true
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
