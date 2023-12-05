@@ -41,6 +41,8 @@ on:
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
+    outputs:
+      DOCKERHUB_SHA: ${{ steps.validate-sha.outputs.DOCKERHUB_SHA }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -59,7 +61,7 @@ jobs:
 
       - name: Update GHC version if needed
         run: |
-          if [[ ! -z ${{ inputs.GHC_VERSION }} ]]
+          if [[ ! -z ${{ inputs.GHC_VERSION }} ]]; then
             sed -i -e "s/ARG GHCVER=.*/ARG GHCVER=${{ inputs.GHC_VERSION }}/" Dockerfile
           fi
       - name: Build and push ubuntu image
@@ -86,6 +88,7 @@ jobs:
           git push origin chainweb-${{ inputs.VERSION_NEW }}
 
       - name: Validate SHAs
+        id: validate-sha
         run: |
           ## spit these to output
           digest1=$(docker inspect kadena/chainweb-node:${{ inputs.VERSION_NEW }} --format '{{ .RepoDigests }}')
@@ -94,5 +97,5 @@ jobs:
             echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_ENV
             exit 1
           fi
-          echo "DOCKERHUB_SHA=$digest1" >> $GITHUB_ENV
+          echo "DOCKERHUB_SHA=$digest1" >> $GITHUB_OUTPUT
           echo "DOCKERHUB_SHA=$digest1"
