@@ -19,6 +19,10 @@ on:
         description: "The X.Y.Z tag for the new version"
         type: string
         required: true
+      GHC_VERSION:
+        description: "Input an updated ghc version"
+        type: string
+        required: false
   workflow_call:
     inputs:
       SHORT_SHA:
@@ -29,6 +33,11 @@ on:
         description: "The X.Y.Z tag for the new version"
         type: string
         required: true
+      GHC_VERSION:
+        description: "Input an updated ghc version"
+        type: string
+        required: false
+
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
@@ -47,7 +56,12 @@ jobs:
         run: |
           echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
           sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
-          
+
+      - name: Update GHC version if needed
+        run: |
+          if [[ ! -z ${{ inputs.GHC_VERSION }} ]]
+            sed -i -e "s/ARG GHCVER=.*/ARG GHCVER=${{ inputs.GHC_VERSION }}/" Dockerfile
+          fi
       - name: Build and push ubuntu image
         uses: docker/build-push-action@v5
         with:
