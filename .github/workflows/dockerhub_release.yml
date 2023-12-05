@@ -48,7 +48,7 @@ jobs:
     outputs:
       DOCKERHUB_SHA: ${{ steps.validate-sha.outputs.DOCKERHUB_SHA }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: kadena-io/chainweb-node-docker
           ssh-key: ${{ secrets.GH_DEPLOYKEY_CHAINWEBDOCKER }}
@@ -69,6 +69,7 @@ jobs:
           if [[ ! -z ${{ inputs.GHC_VERSION }} ]]; then
             sed -i -e "s/ARG GHCVER=.*/ARG GHCVER=${{ inputs.GHC_VERSION }}/" Dockerfile
           fi
+          cat Dockerfile
       - name: Build and push ubuntu image
         uses: docker/build-push-action@v5
         with:
