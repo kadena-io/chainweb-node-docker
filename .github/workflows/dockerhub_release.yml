@@ -37,6 +37,10 @@ on:
         description: "Input an updated ghc version"
         type: string
         required: false
+    outputs:
+      DOCKERHUB_SHA:
+        description: "The sha of the final dockerhub image"
+        value: ${{ jobs.Build-Push.outputs.DOCKERHUB_SHA }}
 
 jobs:
   Build-Push:
@@ -97,8 +101,8 @@ jobs:
           digest1=$(docker inspect kadena/chainweb-node:${{ inputs.VERSION_NEW }} --format '{{ .RepoDigests }}')
           digest2=$(docker inspect kadena/chainweb-node:latest --format '{{ .RepoDigests }}')
           if [[ $digest1 != $digest2 ]]; then
-            echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_ENV
+            echo "DOCKERHUB_SHA=sha mismatches in dockerhub image" >> $GITHUB_OUTPUT
             exit 1
           fi
           echo "DOCKERHUB_SHA=$digest1" >> $GITHUB_OUTPUT
-          echo "DOCKERHUB_SHA=$digest1"
+          echo $digest1
