@@ -92,7 +92,7 @@ jobs:
           git status
           git tag chainweb-${{ inputs.VERSION_NEW }}
           git push
-          git push origin --tags
+          git push --force origin --tags
 
       - name: Validate SHAs
         id: validate-sha
