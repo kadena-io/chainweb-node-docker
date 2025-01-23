@@ -42,6 +42,7 @@ COPY run-chainweb-node.sh .
 COPY initialize-db.sh .
 COPY chainweb.mainnet01.yaml .
 COPY chainweb.testnet04.yaml .
+COPY chainweb.testnet05.yaml .
 COPY chainweb.development.yaml .
 COPY check-health.sh .
 RUN chmod 755 run-chainweb-node.sh initialize-db.sh check-health.sh
@@ -50,6 +51,7 @@ RUN chmod 755 run-chainweb-node.sh initialize-db.sh check-health.sh
 RUN mkdir -p /data/chainweb-db \
     mkdir -p /root/.local/share/chainweb-node/mainnet01/ \
     mkdir -p /root/.local/share/chainweb-node/testnet04/ \
+    mkdir -p /root/.local/share/chainweb-node/testnet05/ \
     mkdir -p /root/.local/share/chainweb-node/development/
 
 # Command
