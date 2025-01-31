@@ -9,7 +9,6 @@ export CHAINWEB_SERVICE_PORT=${CHAINWEB_SERVICE_PORT:-1848}
 export LOGLEVEL=${LOGLEVEL:-warn}
 export MINER_KEY=${MINER_KEY:-}
 export MINER_ACCOUNT=${MINER_ACCOUNT:-$MINER_KEY}
-export ROSETTA=${ROSETTA:-}
 export SKIP_REACHABILITY_CHECK=${SKIP_REACHABILITY_CHECK:-0}
 
 if [[ -z "$CHAINWEB_P2P_HOST" ]] ; then
@@ -60,15 +59,6 @@ chainweb:
 fi
 
 # ############################################################################ #
-# Flags
-
-if [[ -n "$ROSETTA" ]] ; then
-    ROSETTA_FLAG="--rosetta"
-else
-    ROSETTA_FLAG="--no-rosetta"
-fi
-
-# ############################################################################ #
 # Run node
 
 exec ./chainweb-node \
@@ -77,7 +67,6 @@ exec ./chainweb-node \
     --p2p-hostname="$CHAINWEB_P2P_HOST" \
     --p2p-port="$CHAINWEB_P2P_PORT" \
     --service-port="$CHAINWEB_SERVICE_PORT" \
-    "$ROSETTA_FLAG" \
     --log-level="$LOGLEVEL" \
     +RTS -N -t -A64M -H500M -RTS \
     "$@"

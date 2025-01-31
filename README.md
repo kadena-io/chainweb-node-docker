@@ -231,22 +231,6 @@ powerful enough to competitively mine on the Kadena Mainnet. Links to alternate
 mining software can be found
 [here](https://kadena-io.github.io/kadena-docs/Public-Chain-Docs/#start-mining).
 
-# Enable [Rosetta API](https://www.rosetta-api.org/)
-
-The chainweb node has optional support for the rosetta API, which can be enabled
-by setting the `ROSETTA` environment variable to any non-empty value.
-
-```sh
-docker run \
-    --detach \
-    --publish 1848:1848 \
-    --publish 1789:1789 \
-    --env "ROSETTA=1" \
-    --name chainweb-node \
-    --mount type=volume,source=chainweb-data,target=/data \
-    kadena/chainweb-node
-```
-
 # API Overview
 
 TODO
