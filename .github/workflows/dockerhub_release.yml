@@ -12,31 +12,31 @@ on:
   workflow_dispatch:
     inputs:
       SHORT_SHA:
-        description: "hash of chainweb-node release, default to branch running this job"
+        description: "hash of chainweb-node release container"
         type: string
         required: true
       VERSION_NEW:
         description: "The X.Y.Z tag for the new version"
         type: string
         required: true
-      GHC_VERSION:
-        description: "Input an updated ghc version"
-        type: string
-        required: false
+      # GHC_VERSION:
+      #   description: "Input an updated ghc version"
+      #   type: string
+      #   required: false
   workflow_call:
     inputs:
       SHORT_SHA:
-        description: "hash of chainweb-node release, default to branch running this job"
+        description: "hash of chainweb-node release container"
         type: string
         required: true
       VERSION_NEW:
         description: "The X.Y.Z tag for the new version"
         type: string
         required: true
-      GHC_VERSION:
-        description: "Input an updated ghc version"
-        type: string
-        required: false
+      # GHC_VERSION:
+      #   description: "Input an updated ghc version"
+      #   type: string
+      #   required: false
     outputs:
       DOCKERHUB_SHA:
         description: "The sha of the final dockerhub image"
@@ -58,41 +58,45 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_PAT }}
-          
-      - name: Update Dockerfile reference sha
-        run: |
-          echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
-          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
 
-      - name: Update GHC version if needed
+      - name: Upload GHCR image to dockerhub
         run: |
-          if [[ ! -z ${{ inputs.GHC_VERSION }} ]]; then
-            sed -i -e "s/ARG GHCVER=.*/ARG GHCVER=${{ inputs.GHC_VERSION }}/" Dockerfile
-          fi
-          cat Dockerfile
-      - name: Build and push ubuntu image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: kadena/chainweb-node:${{ inputs.VERSION_NEW }},kadena/chainweb-node:latest
+          IMAGE=ghcr.io/kadena-io/chainweb-node:sha-$SHORT_REVISION-frozen
+          
+      # - name: Update Dockerfile reference sha
+      #   run: |
+      #     echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
+      #     sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
+
+      # - name: Update GHC version if needed
+      #   run: |
+      #     if [[ ! -z ${{ inputs.GHC_VERSION }} ]]; then
+      #       sed -i -e "s/ARG GHCVER=.*/ARG GHCVER=${{ inputs.GHC_VERSION }}/" Dockerfile
+      #     fi
+      #     cat Dockerfile
+      # - name: Build and push ubuntu image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     platforms: linux/amd64
+      #     push: true
+      #     tags: kadena/chainweb-node:${{ inputs.VERSION_NEW }},kadena/chainweb-node:latest
           
       - name: Test run docker image
         run: |
           docker run --rm kadena/chainweb-node:${{ inputs.VERSION_NEW }} ./chainweb-node --version
 
-      - name: Update master branch with dockerfile version
-        run: |
-          git config --local user.name "Kadena DevOps"
-          git config --local user.email "devops@kadena.io"
-          git add Dockerfile
-          git commit --allow-empty -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
-          # allow empty in case this is a re-run
-          git status
-          git tag chainweb-${{ inputs.VERSION_NEW }}
-          git push
-          git push --force origin --tags
+      # - name: Update master branch with dockerfile version
+      #   run: |
+      #     git config --local user.name "Kadena DevOps"
+      #     git config --local user.email "devops@kadena.io"
+      #     git add Dockerfile
+      #     git commit --allow-empty -m "chainweb-node version bump ${{ inputs.VERSION_NEW }}"
+      #     # allow empty in case this is a re-run
+      #     git status
+      #     git tag chainweb-${{ inputs.VERSION_NEW }}
+      #     git push
+      #     git push --force origin --tags
 
       - name: Validate SHAs
         id: validate-sha
